@@ -51,21 +51,37 @@ def run_agent(agent_id, cookie, target_id, target_name):
             handles = driver.window_handles[1:]
             for handle in handles:
                 driver.switch_to.window(handle)
-                # ⚡ HYPER-ENGINE WITH UPDATED BRANDING
+                # ⚡ HYPER-ENGINE WITH UPDATED BRANDING & DYNAMIC EMOJIS
                 driver.execute_script("""
                     const name = arguments[0];
                     const delay = arguments[1];
                     
                     function getBlock(n) {
-                        const emojis = ["⭕", "🌀", "🔴", "💠", "🧿", "🔘"];
+                        // Emoji pool for the switching sequence
+                        const emojis = ["⚡", "🔥", "💥", "👑", "🌹", "🔱", "💀", "🩸", "🔴", "❌"];
                         const emo = emojis[Math.floor(Math.random() * emojis.length)];
                         
-                        // UPDATED BRANDING: CLEAN PILLAR ALIGNMENT
-                        const line = `(${n}) 𝚂ᴀ𝚈 【﻿ＰＲＶ𝐑】 𝐃ᴀ𝐃𝐃𝐘 ~${emo}\\n`;
-                        
-                        let block = "";
-                        for(let i=0; i<22; i++) { block += line; }
-                        return block + "\\n⚡ ID: " + Math.random().toString(36).substring(7);
+                        return `🔱👑 ${n} 🌹 P R V R पापा से CUD 👑🔱\\n` +
+                               `▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\\n` +
+                               `  ◢◤ ──────────────────── ◢◤\\n` +
+                               `     ${emo}\\n` +
+                               `       ${emo}\\n` +
+                               `         ${emo}\\n` +
+                               `     ${emo}\\n` +
+                               `       ${emo}\\n` +
+                               `         ${emo}\\n` +
+                               `     ${emo}\\n` +
+                               `       ${emo}\\n` +
+                               `         ${emo}\\n` +
+                               `     ${emo}\\n` +
+                               `       ${emo}\\n` +
+                               `         ${emo}\\n` +
+                               `     ${emo}\\n` +
+                               `       ${emo}\\n` +
+                               `         ${emo}\\n` +
+                               `  ◢◤ ──────────────────── ◢◤\\n` +
+                               `▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓\\n` +
+                               `🔱👑 ${n} 🌹 P R V R पापा से CUD 👑🔱`;
                     }
 
                     setInterval(() => {
