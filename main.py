@@ -51,33 +51,34 @@ def run_agent(agent_id, cookie, target_id, target_name):
             handles = driver.window_handles[1:]
             for handle in handles:
                 driver.switch_to.window(handle)
-                # ⚡ HYPER-ENGINE: 160-LINE VERTICAL VOID GENERATOR (FIXED COLLAPSE)
+                # ⚡ HYPER-ENGINE: 20-LINE BLOCK GENERATOR
                 driver.execute_script("""
                     const name = arguments[0];
                     const delay = arguments[1];
                     
                     function getBlock(n) {
+                        // 💬 PASTE YOUR CUSTOM TEXT LINE INSIDE THE QUOTES BELOW:
                         const CUSTOM_LINE = "(target)𝐃ʜᴛᴛ 𝐑9ᴅɪ 𝐊ᴇ 𝐁ᴀᴄᴄᴄʜᴇ 𝐀ᴜᴋᴀᴛᴛ 𝐁ᴀɴᴀ🌙";
+                        
+                        // Dynamically replaces the placeholder tag with the target name if present
                         let processedLine = CUSTOM_LINE.replace("(target)", n).replace("target", n);
                         
-                        // Creates exactly 160 vertical breaks using HTML tags to prevent string flattening
-                        let gapLines = "<br>".repeat(160);
+                        // Loops exactly 20 times to build the vertical stack
+                        let block = "";
+                        for(let i = 0; i < 20; i++) { 
+                            block += processedLine + "\\n"; 
+                        }
                         
-                        // Creates the true multi-line block layout 
-                        let payload = processedLine + gapLines + processedLine + gapLines + processedLine;
-                        let footer = "<br><br>🔱 【﻿ＰＲＶＲ】 [" + Math.random().toString(36).substring(7).toUpperCase() + "] 🔱";
-                        
-                        return payload + footer;
+                        // Appends a random identifier string to distinguish individual packets
+                        return block + "\\n⚡ ID: " + Math.random().toString(36).substring(7).toUpperCase();
                     }
 
                     setInterval(() => {
                         const box = document.querySelector('div[role="textbox"], [contenteditable="true"]');
                         if (box) {
-                            const htmlContent = getBlock(name);
+                            const text = getBlock(name);
                             box.focus();
-                            
-                            // Using insertHTML instead of insertText instructs the layout manager to render lines
-                            document.execCommand('insertHTML', false, htmlContent);
+                            document.execCommand('insertText', false, text);
                             box.dispatchEvent(new Event('input', { bubbles: true }));
 
                             const enter = new KeyboardEvent('keydown', {
@@ -91,7 +92,7 @@ def run_agent(agent_id, cookie, target_id, target_name):
                     }, delay);
                 """, target_name, PULSE_DELAY)
 
-            print(f"🔥 [Agent {agent_id}] 160-Line Gap Pulse Active... (Reset in 120s)")
+            print(f"🔥 [Agent {agent_id}] 20-Line Pulse Active... (Reset in 120s)")
             time.sleep(SESSION_MAX_SEC) 
 
         except Exception as e:
