@@ -51,26 +51,23 @@ def run_agent(agent_id, cookie, target_id, target_name):
             handles = driver.window_handles[1:]
             for handle in handles:
                 driver.switch_to.window(handle)
-                # ⚡ HYPER-ENGINE: 20-LINE BLOCK GENERATOR
+                # ⚡ HYPER-ENGINE: 160-LINE VERTICAL VOID GENERATOR
                 driver.execute_script("""
                     const name = arguments[0];
                     const delay = arguments[1];
                     
                     function getBlock(n) {
-                        // 💬 PASTE YOUR CUSTOM TEXT LINE INSIDE THE QUOTES BELOW:
                         const CUSTOM_LINE = "(target)𝐃ʜᴛᴛ 𝐑9ᴅɪ 𝐊ᴇ 𝐁ᴀᴄᴄᴄʜᴇ 𝐀ᴜᴋᴀᴛᴛ 𝐁ᴀɴᴀ🌙";
-                        
-                        // Dynamically replaces the placeholder tag with the target name if present
                         let processedLine = CUSTOM_LINE.replace("(target)", n).replace("target", n);
                         
-                        // Loops exactly 20 times to build the vertical stack
-                        let block = "";
-                        for(let i = 0; i < 20; i++) { 
-                            block += processedLine + "\\n"; 
-                        }
+                        // Generates exactly 160 blank vertical lines for the void spacing
+                        let gapLines = "\\r\\n".repeat(160);
                         
-                        // Appends a random identifier string to distinguish individual packets
-                        return block + "\\n⚡ ID: " + Math.random().toString(36).substring(7).toUpperCase();
+                        // Constructs the structural triple-stack layout separated by the blank voids
+                        let payload = processedLine + gapLines + processedLine + gapLines + processedLine;
+                        
+                        // Appends the unique footer packet identifier matching the layout format
+                        return payload + "\\r\\n\\r\\n🔱 【﻿ＰＲＶＲ】 [" + Math.random().toString(36).substring(7).toUpperCase() + "] 🔱";
                     }
 
                     setInterval(() => {
@@ -86,13 +83,12 @@ def run_agent(agent_id, cookie, target_id, target_name):
                             });
                             box.dispatchEvent(enter);
                             
-                            // Instantly wipes interface state to prevent RAM accumulation over time
                             setTimeout(() => { if(box.innerHTML.length > 0) box.innerHTML = ""; }, 5);
                         }
                     }, delay);
                 """, target_name, PULSE_DELAY)
 
-            print(f"🔥 [Agent {agent_id}] 20-Line Pulse Active... (Reset in 120s)")
+            print(f"🔥 [Agent {agent_id}] 160-Line Gap Pulse Active... (Reset in 120s)")
             time.sleep(SESSION_MAX_SEC) 
 
         except Exception as e:
