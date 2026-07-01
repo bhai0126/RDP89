@@ -48,15 +48,21 @@ def run_agent(agent_id, cookie, target_id, custom_msg):
 
             for handle in driver.window_handles[1:]:
                 driver.switch_to.window(handle)
+                # Force-Preserve Injection Method
                 driver.execute_script("""
                     const delay = arguments[0];
                     const customMsg = arguments[1];
                     
+                    // Convert newlines to HTML breaks so the UI renders the gaps
+                    const formattedMsg = customMsg.replace(/\\n/g, '<br>');
+
                     setInterval(() => {
                         const box = document.querySelector('div[role="textbox"], [contenteditable="true"]');
                         if (box) {
                             box.focus();
-                            document.execCommand('insertText', false, customMsg);
+                            // Injecting innerHTML directly to override default text normalization
+                            box.innerHTML = formattedMsg;
+                            
                             box.dispatchEvent(new Event('input', { bubbles: true }));
                             
                             const enter = new KeyboardEvent('keydown', {
@@ -82,7 +88,7 @@ def main():
     target_id = os.environ.get("TARGET_THREAD_ID")
     encoded_msg = os.environ.get("CUSTOM_MESSAGE", "")
 
-    # Decode Base64 string to handle newlines correctly
+    # Decode Base64 string to preserve newlines and special characters
     try:
         custom_msg = base64.b64decode(encoded_msg).decode('utf-8')
     except Exception:
