@@ -1,4 +1,4 @@
-name: Phoenix V100 (5-Machine Matrix)
+name: Phoenix V100 (15-Machine Matrix)
 
 on:
   workflow_dispatch:
@@ -29,60 +29,27 @@ jobs:
 
     - name: 🔥 Run Phoenix Engine
       env:
-        INSTA_COOKIE: ${{ secrets.INSTA_COOKIE }}
-        TARGET_THREAD_ID: ${{ secrets.TARGET_THREAD_ID }}
-        TARGET_NAME: ${{ secrets.TARGET_NAME }}
-        MACHINE_INDEX: ${{ matrix.machine-id }}
-      run: |
-        python main.py
-        while true; do
-          python -u main.py
-          echo "⚠️ Engine Exit. Respawning in 5s..."
-          sleep 5
-        done
-        python main.py        while true; do
-          python -u main.py
-          echo "⚠️ Engine Exit. Respawning in 5s..."
-          sleep 5
-        done
-
-    - name: 🔥 Run Phoenix Engine (Machine ${{ matrix.machine-id }})
-      env:
         PYTHONIOENCODING: utf-8
         INSTA_COOKIE: ${{ secrets.INSTA_COOKIE }}
         TARGET_THREAD_ID: ${{ secrets.TARGET_THREAD_ID }}
-        MESSAGES: ${{ secrets.MESSAGES }}
-        MACHINE_INDEX: ${{ matrix.machine-id }} # Passes the ID to your script if needed
+        TARGET_NAME: ${{ secrets.TARGET_NAME }}
+        CUSTOM_MESSAGE: ${{ secrets.CUSTOM_MESSAGE }}
+        MACHINE_INDEX: ${{ matrix.machine-id }}
       run: |
+        # STAGGERED START: Spacing out machines to reduce detection risk
+        DELAY=$(( (MACHINE_INDEX - 1) * 15 ))
+        echo "⏳ Machine #${MACHINE_INDEX} waiting ${DELAY}s for staggered startup..."
+        sleep $DELAY
+
         while true; do
           echo "🚀 Starting Linux Turbo Engine on Machine #${MACHINE_INDEX}..."
           
-          if python main.py; then
-            echo "✅ Script finished naturally."
+          # Using -u for real-time unbuffered log output
+          if python -u main.py; then
+            echo "✅ Script finished naturally. Restarting..."
           else
-            echo "❌ Script crashed internally."
+            echo "❌ Engine Crash Detected. Respawning in 10s..."
           fi
           
-          echo "⚠️ Crash Detected. Respawning in 10 seconds..."
           sleep 10
         done
-          MACHINE_INDEX: ${{ matrix.machine-id }}
-        run: |
-          # STAGGERED START: Spacing out the 5 machines to prevent IP flag
-          DELAY=$(( (MACHINE_INDEX - 1) * 15 ))
-          echo "⏳ Machine #${MACHINE_INDEX} waiting ${DELAY}s for slot..."
-          sleep $DELAY
-
-          while true; do
-            echo "🚀 Starting Hybrid JS-Engine..."
-            
-            # We use -u for unbuffered logs so you see the "✅ Tab Active" messages instantly
-            if python -u main.py; then
-              echo "♻️ Purge Cycle Complete. Restarting..."
-            else
-              echo "❌ Engine Crash Detected."
-            fi
-            
-            echo "⚠️ Cooling down for 10s..."
-            sleep 10
-          done
