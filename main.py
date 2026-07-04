@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
-import os, time, re, random, threading, gc, sys
+import os, time, re, threading, gc, sys
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium_stealth import stealth
 
-# --- ⚙️ V100 TUNED SETTINGS (STABLE) ---
+# --- ⚙️ V100 TUNED SETTINGS ---
 THREADS = 2             
 TABS_PER_THREAD = 2     
-PULSE_DELAY = 100       
+PULSE_DELAY = 2000      
 SESSION_MAX_SEC = 120   
 TOTAL_DURATION = 25000  
 
@@ -31,13 +31,13 @@ def get_driver():
     stealth(driver, languages=["en-US"], vendor="Google Inc.", platform="Linux armv8l", fix_hairline=True)
     return driver
 
-def run_agent(agent_id, cookie, target_id, target_name):
+def run_agent(agent_id, cookie, target_id):
     global_start = time.time()
     
     while (time.time() - global_start) < TOTAL_DURATION:
         driver = None
         try:
-            print(f"🚀 [Agent {agent_id}] Starting 2-Min Cycle...")
+            print(f"🚀 [Agent {agent_id}] Starting Cycle...")
             driver = get_driver()
             driver.get("https://www.instagram.com/")
             
@@ -45,67 +45,60 @@ def run_agent(agent_id, cookie, target_id, target_name):
             driver.add_cookie({'name': 'sessionid', 'value': sid.strip(), 'domain': '.instagram.com'})
             
             for _ in range(TABS_PER_THREAD):
-                driver.execute_script(f"window.open('https://www.instagram.com/direct/t/{target_id}/', '_blank');")
+                driver.execute_script("window.open('https://www.instagram.com/direct/t/{}/', '_blank');".format(target_id))
                 time.sleep(2)
 
-            handles = driver.window_handles[1:]
-            for handle in handles:
+            for handle in driver.window_handles[1:]:
                 driver.switch_to.window(handle)
-                # ⚡ HYPER-ENGINE: 20-LINE BLOCK GENERATOR
-                driver.execute_script("""
-                    const name = arguments[0];
-                    const delay = arguments[1];
-                    
-                    function getBlock(n) {
-                        // 💬 PASTE YOUR CUSTOM TEXT LINE INSIDE THE QUOTES BELOW:
-                        const CUSTOM_LINE = "(target) 𝚂ᴀ𝚈 【﻿ＰＲＶＲ】 𝐃ᴀᴅᴅ𝐘 ~⭕";
+                # Heart-rotation logic integrated into JS
+                js_code = """
+                const delay = arguments[0];
+                let iteration = 0;
+                const emojis = ["💙", "❤️", "💚", "💛", "💜", "🖤", "🤍", "🤎", "🧡", "💖"];
+                
+                setInterval(() => {
+                    const box = document.querySelector('div[role="textbox"], [contenteditable="true"]');
+                    if (box) {
+                        const currentEmoji = emojis[iteration % emojis.length];
+                        const line = "ᴘʀᴀᴛɪᴋ-ᴠᴇᴇʀ-ꜱᴜʀᴀᴊ-ɴᴇᴍᴇꜱɪꜱ 𝚃𝙼𝙺𝙲 " + currentEmoji + "་༘࿐";
                         
-                        // Dynamically replaces the placeholder tag with the target name if present
-                        let processedLine = CUSTOM_LINE.replace("(target)", n).replace("target", n);
+                        let text = "";
+                        for(let i = 0; i < 10; i++) { text += line + "\\n\\n\\n\\n"; }
                         
-                        // Loops exactly 20 times to build the vertical stack
-                        let block = "";
-                        for(let i = 0; i < 20; i++) { 
-                            block += processedLine + "\\n"; 
-                        }
+                        const dataTransfer = new DataTransfer();
+                        dataTransfer.setData('text/plain', text);
+                        const event = new ClipboardEvent('paste', {
+                            clipboardData: dataTransfer,
+                            bubbles: true
+                        });
+                        box.dispatchEvent(event);
                         
-                        // Appends a random identifier string to distinguish individual packets
-                        return block + "\\n⚡ ID: " + Math.random().toString(36).substring(7).toUpperCase();
-                    }
-
-                    setInterval(() => {
-                        const box = document.querySelector('div[role="textbox"], [contenteditable="true"]');
-                        if (box) {
-                            const text = getBlock(name);
-                            box.focus();
-                            document.execCommand('insertText', false, text);
-                            box.dispatchEvent(new Event('input', { bubbles: true }));
-
+                        setTimeout(() => {
                             const enter = new KeyboardEvent('keydown', {
                                 bubbles: true, cancelable: true, key: 'Enter', code: 'Enter', keyCode: 13
                             });
                             box.dispatchEvent(enter);
-                            
-                            // Instantly wipes interface state to prevent RAM accumulation over time
-                            setTimeout(() => { if(box.innerHTML.length > 0) box.innerHTML = ""; }, 5);
-                        }
-                    }, delay);
-                """, target_name, PULSE_DELAY)
+                        }, 500);
+                        
+                        iteration++;
+                    }
+                }, delay);
+                """
+                driver.execute_script(js_code, PULSE_DELAY)
 
-            print(f"🔥 [Agent {agent_id}] 20-Line Pulse Active... (Reset in 120s)")
+            print(f"🔥 [Agent {agent_id}] Heart-Rotation Active...")
             time.sleep(SESSION_MAX_SEC) 
 
         except Exception as e:
-            print(f"⚠️ [Agent {agent_id}] Cycle Error: {e}")
+            print(f"⚠️ [Agent {agent_id}] Error: {e}")
         finally:
             if driver: driver.quit()
-            gc.collect() 
+            gc.collect()
             time.sleep(2)
 
 def main():
     cookie = os.environ.get("INSTA_COOKIE")
     target_id = os.environ.get("TARGET_THREAD_ID")
-    target_name = os.environ.get("TARGET_NAME", "TARGET")
 
     if not cookie or not target_id:
         print("❌ Missing Secrets!")
@@ -113,7 +106,7 @@ def main():
 
     threads = []
     for i in range(THREADS):
-        t = threading.Thread(target=run_agent, args=(i+1, cookie, target_id, target_name))
+        t = threading.Thread(target=run_agent, args=(i+1, cookie, target_id))
         t.start()
         threads.append(t)
         time.sleep(10)
